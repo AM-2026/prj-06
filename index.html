@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hydro-Hustle</title>
+  <!-- Import Oswald font from Google Fonts -->
+  <link href="https://fonts.googleapis.com/css?family=Oswald:400,700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(skyblue, #87ceeb);
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    #game-container {
+      position: relative;
+      width: 100%;
+      max-width: 800px;
+      height: 90vh;
+      border: 3px solid #444;
+      border-radius: 10px;
+      margin-top: 10px;
+      display: flex;
+      flex-direction: row; /* Place children side by side */
+      justify-content: space-between; /* Space out timer/score and well */
+      align-items: flex-start;
+      padding: 20px;
+      /* Use bck.png as the background image, zoomed in a bit (130%) */
+      background: url('img/bck.png') no-repeat center center;
+      background-size: 165%;
+    }
+
+    #timer {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      font-size: 24px;
+      font-weight: bold;
+      font-family: 'Oswald', Arial, sans-serif; /* Use Oswald font */
+      background: white;
+      padding: 8px 12px;
+      border-radius: 5px;
+    }
+
+    #score {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      font-size: 24px;
+      font-weight: bold;
+      font-family: 'Oswald', Arial, sans-serif; /* Use Oswald font */
+      background: white;
+      padding: 8px 12px;
+      border-radius: 5px;
+    }
+
+    #logo-bar {
+      position: absolute;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 10;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 200px;
+      pointer-events: none; /* Let clicks pass through */
+    }
+    #logo-bar img {
+      width: 20vw;
+      max-width: 180px;
+      min-width: 60px;
+      height: auto;
+      display: block;
+    }
+
+    #left-panel {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      justify-content: flex-end; /* Move content to the bottom */
+      height: 100%;
+    }
+
+    #well {
+      width: 28vw;
+      max-width: 300px;
+      min-width: 80px;
+      height: 28vw;
+      max-height: 300px;
+      min-height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      margin-top: 120px; /* Increased to move the well lower on the screen */
+      margin-right: 10px;
+    }
+    #well img {
+      width: 100%;
+      height: auto;
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      display: block;
+    }
+
+    #bucket-row {
+      display: flex;
+      gap: 10px;
+      margin-top: 40px; /* Add space above the buckets */
+      margin-bottom: 10px; /* Add space from the bottom */
+      align-items: flex-end;
+    }
+
+    .bucket {
+      width: 9vw;
+      max-width: 80px;
+      min-width: 24px;
+      height: 9vw;
+      max-height: 80px;
+      min-height: 24px;
+      cursor: pointer;
+      object-fit: contain;
+      display: block;
+    }
+
+    .bucket.selected {
+      outline: 3px solid yellow;
+    }
+
+    .disabled {
+      pointer-events: none;
+      opacity: 0.5;
+    }
+
+    #game-over {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(255, 255, 255, 0.95);
+      padding: 30px;
+      text-align: center;
+      border-radius: 10px;
+      display: none;
+    }
+
+    #game-over h2 {
+      margin-bottom: 20px;
+    }
+
+    #reset-btn {
+      padding: 10px 20px;
+      font-size: 16px;
+      background: #28a745;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    /* New styles for centered characters */
+    #center-characters {
+      /* Place characters above the buckets, not in the center of the screen */
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px; /* Space between characters and buckets */
+      justify-content: flex-start;
+      align-items: center;
+      position: static; /* Not absolute anymore */
+    }
+
+    #center-characters img {
+      width: 10vw;
+      max-width: 95px;
+      min-width: 32px;
+      height: auto;
+      pointer-events: none; /* Allow clicks to pass through images */
+      display: block;
+    }
+
+    /* Game title style */
+    #game-title {
+      position: absolute;
+      top: 64px; /* Moved a bit lower */
+      left: 10px;
+      font-size: 1.6rem; /* Smaller text */
+      font-weight: bold;
+      color: #454040; /* Black text */
+      font-style: italic; /* Italicize */
+      font-family: 'Oswald', Arial, sans-serif; /* Use Oswald font */
+      /* No background, border, or box shadow */
+      padding: 0;
+      border-radius: 0;
+      background: none;
+      box-shadow: none;
+    }
+
+    @media (max-width: 600px) {
+      #well {
+        width: 40vw;
+        min-width: 50px;
+        height: 40vw;
+        min-height: 50px;
+        margin-top: 120px;
+      }
+      #logo-bar img {
+        width: 35vw;
+        min-width: 40px;
+      }
+      #center-characters img {
+        width: 18vw;
+        min-width: 18px;
+      }
+      .bucket {
+        width: 15vw;
+        min-width: 12px;
+        height: 15vw;
+        min-height: 12px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="game-container">
+    <!-- Logo at the top center between timer and score -->
+    <div id="logo-bar">
+      <img src="img/cw_logo_horizontal.png" alt="Charity: Water Logo" />
+    </div>
+    <!-- Game title under the timer -->
+    <div id="game-title">Hydro-Hustle</div>
+    <!-- Left panel for timer, score, characters, buckets, and game over -->
+    <div id="left-panel">
+      <div id="timer">Time: 30</div>
+      <div id="score">Score: 0</div>
+      <!-- Characters are now just above the buckets -->
+      <div id="center-characters">
+        <img src="img/psnimg.png" alt="Person 1" />
+        <img src="img/psntimg.png" alt="Person 2" />
+      </div>
+      <div id="bucket-row"></div>
+      <div id="game-over">
+        <h2>Game Over!</h2>
+        <button id="reset-btn">Play Again</button>
+      </div>
+    </div>
+    <!-- Well image on the right -->
+    <div id="well">
+      <img src="img/wellimg.png" alt="Well" style="width: 100%; height: 100%; object-fit: contain;" />
+    </div>
+  </div>
+
+  <!-- Background music for the game (looping, low volume) -->
+  <audio id="bg-music" src="audio/aud.mp3" loop></audio>
+
+  <script>
+    const bucketRow = document.getElementById('bucket-row');
+    const well = document.getElementById('well');
+    const timerDisplay = document.getElementById('timer');
+    const scoreDisplay = document.getElementById('score');
+    const gameOverScreen = document.getElementById('game-over');
+    const resetButton = document.getElementById('reset-btn');
+
+    let selectedBucket = null;
+    let score = 0;
+    let timeLeft = 30;
+    let timer;
+
+    function createBuckets() {
+      bucketRow.innerHTML = '';
+      for (let i = 0; i < 5; i++) {
+        // Create an image for the bucket
+        const bucket = document.createElement('img');
+        bucket.src = 'img/bctimg.png'; // Use the bucket image from the img folder
+        bucket.alt = 'Bucket';
+        bucket.classList.add('bucket');
+        bucket.style.width = '80px';
+        bucket.style.height = '80px';
+        bucket.style.objectFit = 'contain';
+        // Add click event to select the bucket
+        bucket.addEventListener('click', () => {
+          if (selectedBucket || timeLeft <= 0) return;
+          bucket.classList.add('selected');
+          selectedBucket = bucket;
+        });
+        bucketRow.appendChild(bucket);
+      }
+    }
+
+    function startGame() {
+      score = 0;
+      timeLeft = 30;
+      selectedBucket = null;
+      scoreDisplay.textContent = 'Score: 0';
+      timerDisplay.textContent = 'Time: 30';
+      gameOverScreen.style.display = 'none';
+      bucketRow.classList.remove('disabled');
+      createBuckets();
+
+      well.addEventListener('click', handleWellClick);
+
+      // Play background music at low volume when the game starts
+      const bgMusic = document.getElementById('bg-music');
+      bgMusic.volume = 0.2; // Set volume to 20%
+      bgMusic.play();
+
+      clearInterval(timer);
+      timer = setInterval(() => {
+        timeLeft--;
+        timerDisplay.textContent = `Time: ${timeLeft}`;
+        if (timeLeft <= 0) {
+          endGame();
+        }
+      }, 1000);
+    }
+
+    function handleWellClick() {
+      if (!selectedBucket || timeLeft <= 0) return;
+      score += 10;
+      scoreDisplay.textContent = `Score: ${score}`;
+      selectedBucket.remove();
+      selectedBucket = null;
+      if (bucketRow.children.length === 0) {
+        createBuckets();
+      }
+    }
+
+    function endGame() {
+      clearInterval(timer);
+      gameOverScreen.style.display = 'block';
+      bucketRow.classList.add('disabled');
+      // Pause the background music when the game ends
+      const bgMusic = document.getElementById('bg-music');
+      bgMusic.pause();
+      bgMusic.currentTime = 0;
+    }
+
+    resetButton.addEventListener('click', () => {
+      startGame();
+    });
+
+    // Start game on load
+    startGame();
+  </script>
+</body>
+</html>
