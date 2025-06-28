@@ -9,14 +9,108 @@
   <style>
     body {
       margin: 0;
-      font-family: Arial, sans-serif;
-      background: linear-gradient(skyblue, #87ceeb);
+      font-family: Georgia;
+      /* Set the whole background to a gradient from orange (top) to blue (bottom) */
+      background: linear-gradient(to bottom, rgb(244, 200, 119), #2196f3);
       height: 100vh;
       overflow: hidden;
       display: flex;
       flex-direction: column;
       align-items: center;
     }
+
+    #options-screen {
+  text-align: center;
+  margin-top: 100px;
+  font-family: 'Oswald', sans-serif;
+  animation: popIn 0.4s ease;
+  /* Remove box gradient/background, use default */
+}
+
+#options-screen h1 {
+  font-size: 3rem;
+  color: #004080;
+  margin-bottom: 0.2em;
+}
+
+#options-screen p {
+  font-size: 1.4rem;
+  color: #333;
+  margin-bottom: 1em;
+}
+
+#options-screen button {
+  padding: 12px 24px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin: 10px;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: transform 0.2s, background 0.3s;
+}
+
+#options-screen button:hover {
+  transform: scale(1.05);
+}
+
+#options-screen button:nth-child(3) {
+  background-color: #8ee4af;
+  color: #05445e;
+}
+#options-screen button:nth-child(4) {
+  background-color: #fbd46d;
+  color: #4b2e05;
+}
+#options-screen button:nth-child(5) {
+  background-color: #f67280;
+  color: white;
+}
+
+footer {
+  text-align: center;
+  padding: 20px 10px;
+  background: #fff3b0;
+  border-top: 2px solid #ccc;
+  font-family: 'Georgia', 'Oswald', sans-serif;
+  font-size: 1rem;
+  position: relative;
+  z-index: 5;
+}
+
+footer p {
+  margin: 0 0 10px;
+  font-weight: bold;
+  color: #444;
+}
+
+footer .footer-links {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+footer .footer-links a {
+  padding: 8px 16px;
+  text-decoration: none;
+  border-radius: 20px;
+  background-color: #fbd46d;
+  color: #333;
+  font-weight: bold;
+  transition: background 0.3s, transform 0.2s;
+  border: 1px solid #e2b93b;
+}
+
+footer .footer-links a:hover {
+  background-color: #ffe17c;
+  transform: scale(1.05);
+}
+
+@keyframes popIn {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
+}
 
     #game-container {
       position: relative;
@@ -42,7 +136,7 @@
       left: 10px;
       font-size: 24px;
       font-weight: bold;
-      font-family: 'Oswald', Arial, sans-serif; /* Use Oswald font */
+      font-family: 'Georgia', Arial, sans-serif; /* Use Oswald font */
       background: white;
       padding: 8px 12px;
       border-radius: 5px;
@@ -54,7 +148,7 @@
       right: 10px;
       font-size: 24px;
       font-weight: bold;
-      font-family: 'Oswald', Arial, sans-serif; /* Use Oswald font */
+      font-family: 'Georgia', Arial, sans-serif; /* Use Oswald font */
       background: white;
       padding: 8px 12px;
       border-radius: 5px;
@@ -141,20 +235,54 @@
     }
 
     #game-over {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background: rgba(255, 255, 255, 0.95);
-      padding: 30px;
-      text-align: center;
-      border-radius: 10px;
-      display: none;
-    }
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: linear-gradient(to bottom right, #fff3b0, #ffe17c);
+  padding: 40px 30px;
+  text-align: center;
+  border-radius: 20px;
+  display: none;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+  font-family: 'Oswald', sans-serif;
+  animation: popIn 0.4s ease-out;
+  z-index: 10;
+}
 
-    #game-over h2 {
-      margin-bottom: 20px;
-    }
+#game-over h2 {
+  margin-bottom: 20px;
+  font-size: 2rem;
+  color: #444;
+}
+
+#reset-btn {
+  padding: 12px 24px;
+  font-size: 1.2rem;
+  background: #00b894;
+  color: white;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.3s, transform 0.2s;
+}
+
+#reset-btn:hover {
+  background: #00a383;
+  transform: scale(1.05);
+}
+
+@keyframes popIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -60%) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
 
     #reset-btn {
       padding: 10px 20px;
@@ -227,20 +355,27 @@
       }
     }
   </style>
+
 </head>
 <body>
-  <div id="game-container">
-    <!-- Logo at the top center between timer and score -->
+  <body>
+  <!-- Options Screen -->
+<div id="options-screen">
+  <h1>💧 Hydro-Hustle 💧</h1>
+  <p>CHOOSE YOUR DIFFICULTY:</p>
+  <button onclick="startGame('easy')">🌿 Easy</button>
+  <button onclick="startGame('normal')">🌤️ Normal</button>
+  <button onclick="startGame('hard')">🔥 Hard</button>
+</div>
+
+  <div id="game-container" style="display: none;">
     <div id="logo-bar">
       <img src="img/cw_logo_horizontal.png" alt="Charity: Water Logo" />
     </div>
-    <!-- Game title under the timer -->
     <div id="game-title">Hydro-Hustle</div>
-    <!-- Left panel for timer, score, characters, buckets, and game over -->
     <div id="left-panel">
       <div id="timer">Time: 30</div>
       <div id="score">Score: 0</div>
-      <!-- Characters are now just above the buckets -->
       <div id="center-characters">
         <img src="img/psnimg.png" alt="Person 1" />
         <img src="img/psntimg.png" alt="Person 2" />
@@ -251,40 +386,65 @@
         <button id="reset-btn">Play Again</button>
       </div>
     </div>
-    <!-- Well image on the right -->
     <div id="well">
       <img src="img/wellimg.png" alt="Well" style="width: 100%; height: 100%; object-fit: contain;" />
     </div>
   </div>
 
-  <!-- Background music for the game (looping, low volume) -->
-  <audio id="bg-music" src="audio/aud.mp3" loop></audio>
+  <footer>
+  <p>Want to learn more?</p>
+  <div class="footer-links">
+    <a href="https://www.charitywater.org/about" target="_blank">Our Impact</a>
+    <a href="https://www.charitywater.org/main#donate" target="_blank">Get Involved</a>
+  </div>
+</footer>
+
+  <!-- Background music element, will be controlled by JavaScript -->
+  <audio id="bg-music" src="aud.mp3" loop></audio>
 
   <script>
+    // Get references to important elements
     const bucketRow = document.getElementById('bucket-row');
     const well = document.getElementById('well');
     const timerDisplay = document.getElementById('timer');
     const scoreDisplay = document.getElementById('score');
     const gameOverScreen = document.getElementById('game-over');
     const resetButton = document.getElementById('reset-btn');
+    const gameContainer = document.getElementById('game-container');
+    const optionsScreen = document.getElementById('options-screen');
+    // Set up background music as a constant
+    const bgMusic = document.getElementById('bg-music');
+    bgMusic.volume = 0.2; // Low volume
+    bgMusic.loop = true; // Loop the music
+
+    // Function to start music if not already playing
+    function playMusic() {
+      if (bgMusic.paused) {
+        bgMusic.play().catch(() => {}); // Ignore errors if autoplay is blocked
+      }
+    }
+
+    // Try to play on load
+    window.addEventListener('DOMContentLoaded', playMusic);
+    // Also play on first user interaction (for browsers that block autoplay)
+    window.addEventListener('click', playMusic);
 
     let selectedBucket = null;
     let score = 0;
     let timeLeft = 30;
+    let pointsPerBucket = 10;
     let timer;
 
     function createBuckets() {
       bucketRow.innerHTML = '';
       for (let i = 0; i < 5; i++) {
-        // Create an image for the bucket
         const bucket = document.createElement('img');
-        bucket.src = 'img/bctimg.png'; // Use the bucket image from the img folder
+        bucket.src = 'img/bctimg.png';
         bucket.alt = 'Bucket';
         bucket.classList.add('bucket');
         bucket.style.width = '80px';
         bucket.style.height = '80px';
         bucket.style.objectFit = 'contain';
-        // Add click event to select the bucket
         bucket.addEventListener('click', () => {
           if (selectedBucket || timeLeft <= 0) return;
           bucket.classList.add('selected');
@@ -294,36 +454,42 @@
       }
     }
 
-    function startGame() {
+    function startGame(difficulty) {
+      optionsScreen.style.display = 'none';
+      gameContainer.style.display = 'flex';
+
+      if (difficulty === 'easy') {
+        timeLeft = 60;
+        pointsPerBucket = 10;
+      } else if (difficulty === 'normal') {
+        timeLeft = 30;
+        pointsPerBucket = 10;
+      } else if (difficulty === 'hard') {
+        timeLeft = 30;
+        pointsPerBucket = 5;
+      }
+
       score = 0;
-      timeLeft = 30;
       selectedBucket = null;
       scoreDisplay.textContent = 'Score: 0';
-      timerDisplay.textContent = 'Time: 30';
+      timerDisplay.textContent = `Time: ${timeLeft}`;
       gameOverScreen.style.display = 'none';
       bucketRow.classList.remove('disabled');
       createBuckets();
 
-      well.addEventListener('click', handleWellClick);
-
-      // Play background music at low volume when the game starts
-      const bgMusic = document.getElementById('bg-music');
-      bgMusic.volume = 0.2; // Set volume to 20%
-      bgMusic.play();
+      // Music is already set up to play and loop
 
       clearInterval(timer);
       timer = setInterval(() => {
         timeLeft--;
         timerDisplay.textContent = `Time: ${timeLeft}`;
-        if (timeLeft <= 0) {
-          endGame();
-        }
+        if (timeLeft <= 0) endGame();
       }, 1000);
     }
 
     function handleWellClick() {
       if (!selectedBucket || timeLeft <= 0) return;
-      score += 10;
+      score += pointsPerBucket;
       scoreDisplay.textContent = `Score: ${score}`;
       selectedBucket.remove();
       selectedBucket = null;
@@ -336,18 +502,14 @@
       clearInterval(timer);
       gameOverScreen.style.display = 'block';
       bucketRow.classList.add('disabled');
-      // Pause the background music when the game ends
-      const bgMusic = document.getElementById('bg-music');
-      bgMusic.pause();
-      bgMusic.currentTime = 0;
+      // Do not pause or reset music when game ends, keep it playing
     }
 
+    well.addEventListener('click', handleWellClick);
     resetButton.addEventListener('click', () => {
-      startGame();
+      optionsScreen.style.display = 'block';
+      gameContainer.style.display = 'none';
     });
-
-    // Start game on load
-    startGame();
   </script>
 </body>
 </html>
